@@ -9,6 +9,7 @@ import (
     "strings"
 
     "github.com/jackc/pgx/v5/pgxpool"
+    _ "github.com/joho/godotenv/autoload"
 
     "moviehub/auth"
     "moviehub/handler"
@@ -36,15 +37,17 @@ func main() {
     mux := http.NewServeMux()
     mux.HandleFunc("POST /api/auth/register", h.Register)
     mux.HandleFunc("POST /api/auth/login", h.Login)
+    mux.HandleFunc("GET /api/me", login(h.Me))
+    mux.HandleFunc("GET /api/genres", h.Genres)
     mux.HandleFunc("GET /api/movies", h.SearchMovies)
     mux.HandleFunc("GET /api/movies/{id}", h.GetMovie)
     mux.HandleFunc("GET /api/movies/{id}/reviews", h.ListReviews)
 
-    origins := strings.Split(os.Getenv("ALLOWED_ORIGINS"), ",")
-    port := os.Getenv("PORT")
+     port := os.Getenv("PORT") // Render ส่งมาให้ ในเครื่องไม่มีก็ใช้ 8080
     if port == "" {
         port = "8080"
     }
-    log.Println("MovieHub API ฟังอยู่ที่ :"+port, "ต้อนรับ", origins)
+    origins := strings.Fields(os.Getenv("CORS_ORIGINS"))
+   log.Println("MovieHub API ฟังอยู่ที่ :"+port, "ต้อนรับ", origins)
     log.Fatal(http.ListenAndServe(":"+port, mw.Logging(mw.CORS(origins, mux))))
 }
