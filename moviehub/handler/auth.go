@@ -8,8 +8,8 @@ import (
     "unicode/utf8"
 
     "moviehub/auth"
-    "moviehub/mw"
     "moviehub/store"
+    "moviehub/mw"
 )
 
 type registerReq struct {
@@ -85,6 +85,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
     }
     writeJSON(w, http.StatusOK, map[string]any{"token": token, "member": m})
 }
+// Me (ด่านที่ 4) ตอบข้อมูลของคนที่ถือตั๋ว เลขสมาชิกมาจากตั๋วที่ RequireLogin ตรวจแล้วเท่านั้น
 func (h *Handler) Me(w http.ResponseWriter, r *http.Request) {
     id, ok := mw.MemberID(r.Context())
     if !ok {

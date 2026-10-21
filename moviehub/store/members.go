@@ -6,7 +6,6 @@ import (
     "time"
 	"github.com/jackc/pgx/v5"
     "github.com/jackc/pgx/v5/pgconn"
-    
 )
 
 var ErrEmailTaken = errors.New("email taken")
@@ -16,7 +15,7 @@ type Member struct {
     Email        string `json:"email"`
     DisplayName  string `json:"displayName"`
     Role         string `json:"role"`
-    CreatedAt    *time.Time `json:"createdAt,omitempty"`
+    CreatedAt    *time.Time `json:"createdAt,omitempty"` // มีเฉพาะตอน list ให้ admin ดู
     PasswordHash string `json:"-"` // ไม่มีวันออกไปกับ JSON
 }
 
@@ -42,8 +41,7 @@ func (s *Store) MemberByEmail(ctx context.Context, email string) (Member, error)
         return Member{}, ErrNotFound
     }
     return m, err
-}
-// MemberByID ใช้กับ GET /api/me: เลขมาจากตั๋วที่ตรวจแล้ว
+}// MemberByID ใช้กับ GET /api/me: เลขมาจากตั๋วที่ตรวจแล้ว
 func (s *Store) MemberByID(ctx context.Context, id int64) (Member, error) {
     var m Member
     err := s.Pool.QueryRow(ctx,
